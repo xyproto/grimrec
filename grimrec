@@ -9,7 +9,7 @@ import glob
 
 
 def geometry_of_focused_window():
-    """Returns the geometry of the currently focused window, using swaymsg.
+    """Return the geometry of the currently focused window, using swaymsg.
     Exit the program if there are issues, since this is fundamental to the use
     of this tool."""
     result = subprocess.getoutput("/usr/bin/swaymsg -t get_tree | " +
