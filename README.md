@@ -12,11 +12,11 @@ Use `sudo` or run as `root` if needed.
 
 Add this to `~/.config/sway/config`:
 
-    bindsym Ctrl+Shift+F12 exec /usr/bin/grimrec /tmp/output.gif 20 7
+    bindsym Ctrl+Shift+F12 exec /usr/bin/grimrec /tmp/output.gif 20 9
 
 Then reload the configuration in Sway, or restart Sway.
 
-This will set up `ctrl-shift-f12` as a hotkey to record the currently focused window for 20 seconds, with 7 frames per second, to `/tmp/output.gif`.
+This will set up `ctrl-shift-f12` as a hotkey to record the currently focused window for 20 seconds, with 9 frames per second, to `/tmp/output.gif`.
 
 The conversion to GIF may take a couple of seconds after the recording has completed.
 
@@ -29,9 +29,9 @@ The conversion to GIF may take a couple of seconds after the recording has compl
 
 ## Testing
 
-For testing `grimrec`, before installing, try creating a 1 second recording, with 9 frames per second:
+For testing `grimrec`, before installing, try creating a 1 second recording, with 7 frames per second:
 
-    ./grimrec a.gif 1 9
+    ./grimrec a.gif 1 7
 
 It can be viewed with `imv`:
 
