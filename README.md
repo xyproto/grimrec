@@ -2,6 +2,10 @@
 
 Record the focused window to a gif file, using [grim](https://github.com/emersion/grim) and [ImageMagick](https://www.imagemagick.org/), under [Sway](https://github.com/swaywm/sway).
 
+## Example recording
+
+![triangles](img/xyproto_shapes.gif)
+
 ## Installation
 
     install -Dm755 grimrec /usr/bin/grimrec
