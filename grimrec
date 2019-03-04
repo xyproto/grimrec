@@ -1,0 +1,113 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import subprocess
+from sys import argv, exit
+import os
+import time
+import glob
+
+
+def geometry_of_focused_window():
+    """Returns the geometry of the currently focused window, using swaymsg.
+    Exit the program if there are issues, since this is fundamental to the use
+    of this tool."""
+    result = subprocess.getoutput("/usr/bin/swaymsg -t get_tree | " +
+                                  "/usr/bin/grep 'focused\": true' -B7")
+    fields = [field.strip("\", \t\n\r'") for field in result.split(":")]
+    numbers = []
+    for field in fields:
+        if "," in field:
+            number = field.split(",")[0]
+            if "\"" not in number:
+                numbers.append(number.strip("\n }"))
+    if len(numbers) != 4:
+        print("invalid output from swaymsg -t get_tree:", numbers)
+        exit(1)
+    return "{},{} {}x{}".format(numbers[0], numbers[1], numbers[2], numbers[3])
+
+
+def screenshot(geometry, filename):
+    """Takes a screenshot of the currently focused window, returns True if
+    there were no issues."""
+    cmd = ["/usr/bin/grim", "-g", geometry, filename]
+    return subprocess.call(cmd) == 0
+
+
+def record(storage_path="/tmp", name="grimrec", duration=30,
+           frames_per_second=12):
+    """Records to a given path, to filenames starting with the given name, for
+    N seconds with N frames_per_second. Return True if there are no issues."""
+    geometry = geometry_of_focused_window()
+    loop_sleep = 1.0 / frames_per_second
+    print("Recording for {} seconds, with {} frames per second".
+          format(duration, frames_per_second))
+    for i in range(0, duration * frames_per_second):
+        loop_start = time.time()
+        filename = os.path.join(storage_path, name + "_" +
+                                str(i).zfill(3) + ".png")
+        print("Taking screenshot of focused window to " + filename)
+        if not screenshot(geometry, filename):
+            print("could not take screenshot to " + filename)
+            return False
+        loop_time_passed = time.time() - loop_start
+        if (loop_sleep - loop_time_passed) <= 0:
+            print("FPS is too high, can not keep up")
+            continue
+        # Sleep the pre-calculated loop_sleep, but substract time passed so far
+        time.sleep(loop_sleep - loop_time_passed)
+    return True
+
+
+def png_to_gif(storage_path="/tmp", name="grimrec", output_file="output.gif"):
+    """Convert from a series of png images to a gif, using convert from
+    ImageMagick. Return True if there are no issues."""
+    filenames = os.path.join(storage_path, name + "_*.png")
+    return subprocess.call(["/usr/bin/convert", filenames, output_file]) == 0
+
+
+def remove_temp_files(storage_path="/tmp", name="grimrec"):
+    """Delete temporary files. Return True if there are no issues."""
+    for filename in glob.glob(os.path.join(storage_path, name + "_*.png")):
+        try:
+            os.remove(filename)
+        except OSError as e:
+            print(e)
+            return False
+    return True
+
+
+def main():
+    print("Grim Screen Recorder 1.0.0")
+
+    # Default values
+    output_file = "/tmp/output.gif"
+    duration = 20
+    frames_per_second = 9
+
+    if len(argv) > 1:
+        output_file = argv[1]
+    if len(argv) > 2:
+        duration = int(argv[2])
+    if len(argv) > 3:
+        frames_per_second = int(argv[3])
+
+    print("Removing existing temporary files")
+    remove_temp_files()
+    print("Recording the currently focused window for {} seconds, with {} FPS".
+          format(duration, frames_per_second))
+    if not record(duration=duration, frames_per_second=frames_per_second):
+        print("error: recording failed")
+        exit(1)
+    print("Writing to " + output_file)
+    if not png_to_gif(output_file=output_file):
+        print("error: converting from png to gif failed")
+        exit(1)
+    print("Removing temporary files")
+    if not remove_temp_files():
+        print("error: removing temporary files failed")
+        exit(1)
+
+
+if __name__ == "__main__":
+    main()
