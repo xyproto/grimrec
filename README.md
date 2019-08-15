@@ -2,6 +2,8 @@
 
 Record the focused window to a GIF file, using [grim](https://github.com/emersion/grim) and [ImageMagick](https://www.imagemagick.org/), under [Sway](https://github.com/swaywm/sway).
 
+This is the "glue and rubberband" way of doing a screeen recording under Sway, but it works.
+
 ## Example recording
 
 ![triangles](img/xyproto_shapes.gif)
@@ -10,7 +12,9 @@ Record the focused window to a GIF file, using [grim](https://github.com/emersio
 
     install -Dm755 grimrec /usr/bin/grimrec
 
-Install by using `sudo` or running as `root`, if needed.
+* Install by using `sudo` or running as `root`, if needed.
+* If possible, install with a proper package manager.
+* Install to `/usr/local/bin` if you have a UNIX beard.
 
 ## Configuration
 
@@ -43,8 +47,8 @@ These executables are expected to be found:
 * `/usr/bin/env`
 * `/usr/bin/grep`
 * `/usr/bin/grim`
-* Python 3 in the `PATH` as `python`
 * `/usr/bin/swaymsg`
+* Python 3 in the `PATH` as `python`
 
 ## Testing
 
