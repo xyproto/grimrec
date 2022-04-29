@@ -4,6 +4,8 @@ Record the focused window to a GIF file, using [grim](https://github.com/emersio
 
 This is the "glue and rubberband" way of doing a screeen recording under Sway, but it works.
 
+The code is just 122 lines of Python.
+
 ## Example recording
 
 ![triangles](img/xyproto_shapes.gif)
