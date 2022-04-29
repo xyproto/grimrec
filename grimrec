@@ -12,24 +12,33 @@ def geometry_of_focused_window():
     """Return the geometry of the currently focused window, using swaymsg.
     Exit the program if there are issues, since this is fundamental to the use
     of this tool."""
-    result = subprocess.getoutput("/usr/bin/swaymsg -t get_tree | " +
-                                  "/usr/bin/grep 'focused\": true' -B7")
-    fields = [field.strip("\", \t\n\r'") for field in result.split(":")]
-    numbers = []
-    for field in fields:
-        if "," in field:
-            number = field.split(",")[0]
-            if "\"" not in number:
-                numbers.append(number.strip("\n }"))
-    if len(numbers) != 4:
-        print("invalid output from swaymsg -t get_tree:", numbers)
+    result = subprocess.getoutput("/usr/bin/swaymsg -t get_tree")
+    import json
+    tree = json.loads(result)
+    geometry = find_focused_node_geometry(tree)
+
+    if geometry is None:
+        print("cannot find geometry of focused node")
         exit(1)
-    return "{},{} {}x{}".format(numbers[0], numbers[1], numbers[2], numbers[3])
+
+    return "{},{} {}x{}".format(geometry['x'], geometry['y'], geometry['width'], geometry['height'])
+
+def find_focused_node_geometry(root):
+    if root['focused']:
+        return root['rect']
+    for node in root['nodes']:
+        found = find_focused_node_geometry(node)
+        if found is not None:
+            return found
+    return None
+
+
 
 
 def screenshot(geometry, filename):
     """Takes a screenshot of the currently focused window, returns True if
     there were no issues."""
+    print(geometry)
     cmd = ["/usr/bin/grim", "-g", geometry, filename]
     return subprocess.call(cmd) == 0
 
