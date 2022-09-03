@@ -50,7 +50,7 @@ These executables are expected to be found:
 * `/usr/bin/grep`
 * `/usr/bin/grim`
 * `/usr/bin/swaymsg`
-* Python 3 in the `PATH` as `python`
+* Python 3 in the `PATH` as `python3`
 
 ## Testing
 
